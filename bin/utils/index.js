@@ -10,6 +10,12 @@ const utils = {
     },
     onError: function(error) {
         console.error(`Keep calm bro, this is a error code ${error.code}`);
+    },
+    onListening: function() {
+        const debug = require('debug');
+        const addr = require('../server').address();
+        const bind = typeof addr === 'string' ? `pipe:${addr}`:`port:${addr.port}`;
+        debug(`Listening on ${bind}`);
     }
 }
 
