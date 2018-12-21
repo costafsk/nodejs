@@ -9,7 +9,7 @@ const utils = {
         return false;
     },
     onError: function(error) {
-        console.error(`Keep calm bro, this is code error ${error.code}`);
+        console.error(`Keep calm bro, this is a error code ${error.code}`);
     }
 }
 
