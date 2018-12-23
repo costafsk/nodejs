@@ -1,3 +1,5 @@
+'use strict';
+
 const utils = {
     portDefault: function(val) {
         const port = parseInt(val, 10);

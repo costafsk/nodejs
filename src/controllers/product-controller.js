@@ -1,7 +1,18 @@
-'use strict'
+'use strict';
+
+const mongoose = require('mongoose');
+const Product = mongoose.model('Product');
+
 
 exports.post = (req, res, next) => {
-    res.status(201).send(req.body);
+    const product = new Product(req.body);
+    // Study Async / Await
+
+    product.save().then(Successlog => {
+        res.status(201).send({message: 'Product Created Succesfully'});
+    }).catch(erorLog => {
+        res.status(400).send({message:'BAD REQUEST BRO, PRODUCT WAS NOT CREATED', data: e})
+    })
 };
 
 exports.put = (req, res, next) => {
