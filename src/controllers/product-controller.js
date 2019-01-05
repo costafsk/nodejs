@@ -2,80 +2,68 @@
 
 const mongoose = require('mongoose');
 const Product = mongoose.model('Product');
+const repository = require('../repositories/product-repository');
 
-exports.get = (req, res, next) => {
-    Product.find({active:true}, 'title slug price').then(
-        data => {
-            res.status(200).send(data);
-        }).catch(e => {
-            res.status(400).send(e);
-        });
+exports.get = async (req, res, next) => {
+    try {
+        const data = await repository.get();
+        res.status(200).send(data);
+        
+    } catch(e) {
+        res.status(500).send({message:'Failed request'});
+    }
 };
 
-exports.getBySlug = (req, res, next) => {
-    Product.find({
-        slug: req.params.slug,
-        active: true
-    }, 'title slug price tags description').then(
-        data => {
-            res.status(200).send(data);
-        }).catch(e => {
-            res.status(400).send(e);
-    });
+exports.getBySlug = async (req, res, next) => {
+    try {
+        const data = await repository.getBySlug(req.params.slug);
+        res.status(200).send(data);
+    } catch(e) {
+        res.status(500).send({message:'Failed request'});
+    }
 };
 
-exports.getByTag = (req, res, next) => {
-    Product.find({
-        tags: req.params.tag,
-        active: true
-    }, 'title slug price tags description').then(
-        data => {
-            res.status(200).send(data);
-        }).catch(e => {
-        res.status(400).send(e);
-    });
+exports.getByTag = async (req, res, next) => {
+    try {
+        const data = await repository.getByTag(req.params.tag);
+        res.status(200).send(data);
+    } catch(e) {
+        res.status(500).send({message: 'Failed request'});
+    }
 };
 
-exports.getById = (req, res, next) => {
-    Product.findById(req.params.id, 'title slug price tags description active').then(
-        data => {
-            res.status(200).send(data);
-        }).catch(e => {
-            res.status(400).send(e);
-    });
+exports.getById = async (req, res, next) => {
+    try { 
+        const data = await repository.getById(req.params.id);
+        res.status(200).send(data);
+    } catch(e) {
+        res.status(500).send({message: 'Failed request'});
+    }
 }
 
-exports.post = (req, res, next) => {
-    const product = new Product(req.body);
-    // Study Async / Await
-
-    product.save().then(Successlog => {
+exports.post = async (req, res, next) => {
+    try {
+        await repository.create(req.body);
         res.status(201).send({message: 'Product Created Succesfully'});
-    }).catch(erorLog => {
+    } catch(e) {
         res.status(400).send({message:'BAD REQUEST BRO, PRODUCT WAS NOT CREATED', data: e})
-    })
+    }
 };
 
-exports.put = (req, res, next) => {
-    Product.findByIdAndUpdate(req.params.id, {
-        $set: {
-            title: req.body.title,
-            description: req.body.description,
-            price: req.body.price
-        }
-    }).then(status => {
+exports.put = async (req, res, next) => {
+    try {
+        await repository.update(req.params.id, req.body)
         res.status(200).send({message: 'product successfully updated'});
-    }).catch(e => {
+    } catch (e) {
         res.status(400).send(e);
-    });
+    }
 };
 
-exports.delete = (req, res, next) => {
-    Product.findOneAndRemove(req.params.id).then(status => {
-        res.status(200).send({
-            message: 'product successfully removed'
-        });
-    }).catch(e => {
+exports.delete = async (req, res, next) => {
+    try {
+        await repository.delete(req.params.id);
+        res.status(200).send({message: 'product successfully removed'});
+    } catch(e) {
         res.status(400).send(e);
-    });
+    }
 };
